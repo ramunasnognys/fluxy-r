@@ -36,6 +36,9 @@ app.post('/generate-image', async (req, res) => {
       disable_safety_check: disableSafetyCheck
     };
 
+    // Print the values to confirm they are changing
+    console.log(`Received request with quality: ${quality}, promptStrength: ${promptStrength}`);
+
     const output = await replicate.run("black-forest-labs/flux-dev", { input });
     res.json({ imageUrl: output[0] });
   } catch (error) {
