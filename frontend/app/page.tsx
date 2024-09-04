@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
   const [aspectRatio, setAspectRatio] = useState("16:9");
@@ -21,6 +22,7 @@ export default function Home() {
   const [promptStrength, setPromptStrength] = useState(0.8);
   const [generatedImageUrl, setGeneratedImageUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
 
   const handleGenerate = async () => {
     setIsLoading(true);
@@ -37,6 +39,7 @@ export default function Home() {
           disableSafetyCheck,
           quality,
           promptStrength,
+          imageUrl, // Add this line to include the image URL
         }),
       });
       const data = await response.json();
@@ -58,6 +61,14 @@ export default function Home() {
           className="mb-4 text-green-500"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
+        />
+        
+        <Input
+          type="url"
+          placeholder="Enter Image URL"
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
+          className="text-black"
         />
         
         <div className="flex justify-between items-center">

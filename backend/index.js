@@ -7,7 +7,11 @@ const app = express();
 const PORT = 4000;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // Replace with your frontend URL
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
