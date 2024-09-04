@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import WaveBackground from "@/components/WaveBackground";
+import * as FileSaver from 'file-saver';
 
 export default function Home() {
   const [aspectRatio, setAspectRatio] = useState("16:9");
@@ -51,8 +53,19 @@ export default function Home() {
     }
   };
 
+  const handleDownload = () => {
+    if (generatedImageUrl) {
+      fetch(generatedImageUrl)
+        .then(response => response.blob())
+        .then(blob => {
+          FileSaver.saveAs(blob, `generated-image.${imageFormat}`);
+        })
+        .catch(error => console.error('Error downloading image:', error));
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-24 bg-black text-white">
+    <main className="flex min-h-screen flex-col items-center justify-start p-24 bg-black text-white relative">
       <h1 className="text-4xl font-bold mb-8 text-center">Flux Uncensored Image Generator</h1>
       
       <div className="w-full max-w-2xl space-y-6">
@@ -133,14 +146,24 @@ export default function Home() {
         
         <PromptStrengthSlider value={promptStrength} onChange={setPromptStrength} />
         
-        <Button onClick={handleGenerate} disabled={isLoading}>
+        <Button 
+          onClick={handleGenerate} 
+          disabled={isLoading} 
+          className="w-full bg-white text-black hover:bg-gray-200"
+        >
           {isLoading ? 'Generating...' : 'Generate Image'}
         </Button>
         
         {generatedImageUrl && (
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-4">Generated Image:</h2>
-            <img src={generatedImageUrl} alt="Generated" className="w-full" />
+            <img src={generatedImageUrl} alt="Generated" className="w-full mb-4" />
+            <Button 
+              onClick={handleDownload} 
+              className="w-full bg-white text-black hover:bg-gray-200"
+            >
+              Download
+            </Button>
           </div>
         )}
       </div>
