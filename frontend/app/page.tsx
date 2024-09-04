@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { QualitySlider, PromptStrengthSlider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -9,13 +10,43 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export default function Home() {
   const [aspectRatio, setAspectRatio] = useState("16:9");
   const [imageFormat, setImageFormat] = useState("png");
   const [disableSafetyCheck, setDisableSafetyCheck] = useState(false);
+  const [prompt, setPrompt] = useState("");
+  const [quality, setQuality] = useState(80);
+  const [promptStrength, setPromptStrength] = useState(0.8);
+  const [generatedImageUrl, setGeneratedImageUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleGenerate = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('http://localhost:4000/generate-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt,
+          aspectRatio,
+          imageFormat,
+          disableSafetyCheck,
+          quality,
+          promptStrength,
+        }),
+      });
+      const data = await response.json();
+      setGeneratedImageUrl(data.imageUrl);
+    } catch (error) {
+      console.error('Error generating image:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-24 bg-black text-white">
@@ -25,6 +56,8 @@ export default function Home() {
         <Textarea
           placeholder="Enter Your Prompt"
           className="mb-4 text-green-500"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
         />
         
         <div className="flex justify-between items-center">
@@ -85,14 +118,20 @@ export default function Home() {
           </label>
         </div>
         
-        <QualitySlider />
+        <QualitySlider value={quality} onChange={setQuality} />
         
-        <PromptStrengthSlider />
+        <PromptStrengthSlider value={promptStrength} onChange={setPromptStrength} />
         
-        {/* Placeholder for future content */}
-        <p className="text-center text-gray-400 mt-4">
-          Content for the image generator will be added here.
-        </p>
+        <Button onClick={handleGenerate} disabled={isLoading}>
+          {isLoading ? 'Generating...' : 'Generate Image'}
+        </Button>
+        
+        {generatedImageUrl && (
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4">Generated Image:</h2>
+            <img src={generatedImageUrl} alt="Generated" className="w-full" />
+          </div>
+        )}
       </div>
     </main>
   );

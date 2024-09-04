@@ -26,9 +26,7 @@ const Slider = React.forwardRef<
 Slider.displayName = SliderPrimitive.Root.displayName
 
 // New QualitySlider component
-const QualitySlider = () => {
-  const [value, setValue] = React.useState(50)
-
+const QualitySlider = ({ value, onChange }: { value: number; onChange: (value: number) => void }) => {
   return (
     <div className="w-full max-w-sm space-y-2">
       <div className="flex items-center justify-between">
@@ -39,20 +37,19 @@ const QualitySlider = () => {
       </div>
       <Slider
         id="quality"
-        defaultValue={[50]}
+        min={1}
         max={100}
         step={1}
+        value={[value]}
+        onValueChange={(newValue) => onChange(newValue[0])}
         className="w-full"
-        onValueChange={(newValue) => setValue(newValue[0])}
       />
     </div>
   )
 }
 
 // New PromptStrengthSlider component
-const PromptStrengthSlider = () => {
-  const [value, setValue] = React.useState(0.5)
-
+const PromptStrengthSlider = ({ value, onChange }: { value: number; onChange: (value: number) => void }) => {
   return (
     <div className="w-full max-w-sm space-y-2">
       <div className="flex items-center justify-between">
@@ -63,11 +60,12 @@ const PromptStrengthSlider = () => {
       </div>
       <Slider
         id="prompt-strength"
-        defaultValue={[0.5]}
+        min={0}
         max={1}
         step={0.01}
+        value={[value]}
+        onValueChange={(newValue) => onChange(newValue[0])}
         className="w-full"
-        onValueChange={(newValue) => setValue(newValue[0])}
       />
     </div>
   )
